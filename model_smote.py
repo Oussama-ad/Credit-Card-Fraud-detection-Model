@@ -5,16 +5,16 @@ from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as  plt
 import numpy as np 
 import pandas as pd 
-from sklearn.metrics import confusion_matrix , ConfusionMatrixDisplay , accuracy_score
-
+from sklearn.metrics import confusion_matrix , ConfusionMatrixDisplay , accuracy_score , average_precision_score
+from xgboost import XGBClassifier
 
 df = pd.read_csv('creditcard.csv')
 model_smote = RandomForestClassifier(random_state=42 , n_jobs=-1)
-
+ 
 X= df.drop(columns=['Class'])
 Y= df['Class'] 
 
-X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3,random_state=42)
+X_train,X_test,Y_train,Y_test = train_test_split(X,Y,test_size=0.3 , random_state=42)
 scaler = StandardScaler()
 
 X_train[['Time','Amount']] = scaler.fit_transform(X_train[['Time','Amount']])
@@ -32,4 +32,6 @@ print("accuracy = "+str(acc*100)+"%")
 conf = confusion_matrix(Y_test,y_pred)
 disp = ConfusionMatrixDisplay(confusion_matrix=conf) 
 disp.plot(cmap='Reds')
+auprc = average_precision_score(Y_test, y_pred)
+print(f"AUPRC: {round(auprc, 4)}")
 plt.show()
